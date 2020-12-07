@@ -51,6 +51,22 @@
             <artifactId>janino</artifactId>
             <version>3.0.8</version>
         </dependency>
+        <!-- geo-spark -->
+        <dependency>
+            <groupId>org.datasyslab</groupId>
+            <artifactId>geospark</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.datasyslab</groupId>
+            <artifactId>geospark-sql_2.3</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.datasyslab</groupId>
+            <artifactId>geospark-viz_2.3</artifactId>
+            <version>1.2.0</version>
+        </dependency>
 
     </dependencies>
 

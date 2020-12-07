@@ -1,35 +1,45 @@
 package com.ucr.edu.lifequality.Controller;
 
 
-import org.apache.spark.sql.SparkSession;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.datasyslab.geospark.spatialOperator.RangeQuery;
+import org.datasyslab.geospark.spatialRDD.PointRDD;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.apache.spark.SparkConf;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
-import static org.apache.spark.sql.functions.col;
 
 @RestController
 public class RankingController {
+
     @Autowired
-    SparkSession spark;
+    JavaSparkContext sc;
     @RequestMapping("/")
     public String getPage(){
         return "Welcome to the ranking!";
     }
-    @RequestMapping("/test")
-    public String test(){
-        return "test!";
-    }
-    @RequestMapping("/show")
-    public String gethospital(){
-        Dataset<Row> df_hos = spark.read() //DataFrame
-                .option("header", "true")
-                .csv("../data/Hospitals.csv"); // default path: file:/Users/pangzeyu/Desktop/CS226/project/spark-java-sql/
-        return df_hos.collectAsList().toString(); // output the first 20 lines
+
+    @RequestMapping("/getHospitals")
+    public int getHospitals() throws Exception {
+        JavaRDD<String> hosData = sc.textFile("../data/Hospitals.csv");
+        JavaRDD<Point> hosPoint = hosData.map(x -> {
+            GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+
+            return geometryFactory.createPoint(new Coordinate(new Double(x.split(",")[0]),new Double(x.split(",")[1])));
+        });
+        PointRDD hosPointRDD = new PointRDD(hosPoint);
+        Envelope rangeQueryWindow = new Envelope(-90.01,-80.01,30.01,40.01);
+        JavaRDD test = RangeQuery.SpatialRangeQuery(hosPointRDD,rangeQueryWindow,false,false);
+        return test.collect().size();
+
+
+
+
+
     }
 }
