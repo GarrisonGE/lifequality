@@ -1,6 +1,7 @@
 package com.ucr.edu.lifequality.Controller;
 
 
+import com.ucr.edu.lifequality.Service.Count;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -18,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RankingController {
 
     @Autowired
-    JavaSparkContext sc;
+    Count count;
+
     @RequestMapping("/")
     public String getPage(){
         return "Welcome to the ranking!";
@@ -26,16 +28,9 @@ public class RankingController {
 
     @RequestMapping("/getHospitals")
     public int getHospitals() throws Exception {
-        JavaRDD<String> hosData = sc.textFile("../data/Hospitals.csv");
-        JavaRDD<Point> hosPoint = hosData.map(x -> {
-            GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+        Envelope range = new Envelope(-90.01,-80.01,30.01,40.01);
 
-            return geometryFactory.createPoint(new Coordinate(new Double(x.split(",")[0]),new Double(x.split(",")[1])));
-        });
-        PointRDD hosPointRDD = new PointRDD(hosPoint);
-        Envelope rangeQueryWindow = new Envelope(-90.01,-80.01,30.01,40.01);
-        JavaRDD test = RangeQuery.SpatialRangeQuery(hosPointRDD,rangeQueryWindow,false,false);
-        return test.collect().size();
+        return count.getHosCount(range);
 
 
 
