@@ -4,15 +4,7 @@ package com.ucr.edu.lifequality.Controller;
 import com.ucr.edu.lifequality.Model.Location;
 import com.ucr.edu.lifequality.Model.Rank;
 import com.ucr.edu.lifequality.Service.Count;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.datasyslab.geospark.spatialOperator.RangeQuery;
-import org.datasyslab.geospark.spatialRDD.PointRDD;
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,14 +38,14 @@ public class RankingController {
                                    @RequestParam Location lr,
                                    @RequestParam(defaultValue = "3.6") float weight1,
                                    @RequestParam(defaultValue = "2.0") float weight2,
-                                   @RequestParam(defaultValue = "0") float weight3,
+                                   @RequestParam(defaultValue = "1") float weight3,
                                    @RequestParam(defaultValue = "0") float weight4) throws Exception {
         ArrayList<Rank> result = new ArrayList<Rank>();
-        double interval_la = (lr.getLatitude() - ul.getLatitude())/5;
-        double interval_lg = (lr.getLongitude()- ul.getLongitude())/5;
+        double interval_la = (lr.getLatitude() - ul.getLatitude())/3;
+        double interval_lg = (lr.getLongitude()- ul.getLongitude())/3;
 
-        for(int i = 0; i <= 4; i++){
-            for(int j = 0; j<= 4; j++){
+        for(int i = 0; i <= 2; i++){
+            for(int j = 0; j<= 2; j++){
                 Rank rank = new Rank();
                 double ul_la = ul.getLatitude() + (i * interval_la);
                 double ul_lg = ul.getLongitude() + (j * interval_lg);
@@ -63,12 +55,16 @@ public class RankingController {
                 Location subLR = new Location(lr_la,lr_lg);
                 rank.setUl(subUL);
                 rank.setLr(subLR);
-                Envelope range = new Envelope(ul_la, ul_lg, lr_la, lr_lg);
+                Envelope range = new Envelope(ul_la, lr_la, ul_lg, lr_lg);
                 rank.setRank(count.ranking(range,weight1,weight2,weight3,weight4));
                 result.add(rank);
 
             }
         }
+//        Envelope range = new Envelope(ul.getLatitude(),lr.getLatitude(),ul.getLongitude(),lr.getLongitude());
+//        Rank rank = new Rank();
+//        rank.setRank(count.ranking(range,weight1,weight2,weight3,weight4));
+//        result.add(rank);
 
 
         return result;
