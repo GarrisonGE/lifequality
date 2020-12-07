@@ -35,12 +35,8 @@ public class Count {
         JavaRDD test = RangeQuery.SpatialRangeQuery(parkPolygonRDD, rangeQueryWindow, false, true);
         return test.collect().size();
     }
-    public float ranking(Envelope rangeQueryWindow, float weight1, float weight2, float weight3, float weight4) throws Exception {
-        int hosCount = this.getHosCount(rangeQueryWindow);
-        int poiCount = this.getPOICount(rangeQueryWindow);
-        int parkCount = this.getParkCount(rangeQueryWindow);
-        System.out.println("hosCount:" + hosCount +" poiCount:" + poiCount +" parkCount:" + parkCount);
+    public float ranking(int c_hos,int c_poi, int c_park, float c_air, float w_hos, float w_poi, float w_park, float w_airquality) throws Exception {
 
-        return (hosCount*weight1 + poiCount*weight2 + parkCount*weight3);
+        return (c_hos*w_hos + c_poi*w_poi + c_park*w_park + c_air*w_airquality);
     }
 }

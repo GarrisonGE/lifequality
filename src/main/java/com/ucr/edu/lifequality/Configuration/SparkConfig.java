@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.serializer.KryoSerializer;
+import org.apache.spark.storage.StorageLevel;
 import org.datasyslab.geospark.enums.FileDataSplitter;
 import org.datasyslab.geospark.enums.IndexType;
 import org.datasyslab.geospark.spatialRDD.PointRDD;
@@ -43,6 +44,7 @@ public class SparkConfig {
         });
         PointRDD hosPointRDD = new PointRDD(hosPoint);
         hosPointRDD.buildIndex(IndexType.RTREE,false);
+        hosPointRDD.indexedRawRDD.persist(StorageLevel.MEMORY_ONLY());
 
         return hosPointRDD;
     }
@@ -56,12 +58,14 @@ public class SparkConfig {
         });
         PointRDD poiPointRDD = new PointRDD(poiPoint);
         poiPointRDD.buildIndex(IndexType.RTREE,false);
+        poiPointRDD.indexedRawRDD.persist(StorageLevel.MEMORY_ONLY());
         return poiPointRDD;
     }
     @Bean(name="park")
     public PolygonRDD getParkRDD() throws Exception {
         PolygonRDD parkPolygonRDD = new PolygonRDD(sc, "../data/parks.csv",0, -1, FileDataSplitter.WKT,  true);
         parkPolygonRDD.buildIndex(IndexType.RTREE,false);
+        parkPolygonRDD.indexedRawRDD.persist(StorageLevel.MEMORY_ONLY());
         return parkPolygonRDD;
     }
 

@@ -1,25 +1,18 @@
 package com.ucr.edu.lifequality.Model;
 
 public class Location {
-    private Double latitude;
     private Double longitude;
+    private Double latitude;
+
 
     public Location(String data){
-        this.latitude = new Double(data.split(",")[0]);
-        this.longitude = new Double(data.split(",")[1]);
+        this.longitude = new Double(data.split(",")[0]);
+        this.latitude = new Double(data.split(",")[1]);
     }
 
-    public Location(double la, double lg) {
-        this.latitude = la;
+    public Location(double lg, double la) {
         this.longitude = lg;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+        this.latitude = la;
     }
 
     public Double getLongitude() {
@@ -28,5 +21,12 @@ public class Location {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 }
