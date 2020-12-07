@@ -49,5 +49,17 @@ public class SparkConfig {
 
         return hosPointRDD;
     }
+    @Bean(name="poi")
+    public PointRDD getPOIRDD() throws Exception {
+        JavaRDD<String> poiData= sc.textFile("../data/poi.csv");
+        JavaRDD<Point> poiPoint = poiData.map(x -> {
+            GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+
+            return geometryFactory.createPoint(new Coordinate(new Double(x.split(",")[0]),new Double(x.split(",")[1])));
+        });
+        PointRDD poiPointRDD = new PointRDD(poiPoint);
+        poiPointRDD.buildIndex(IndexType.RTREE,false);
+        return poiPointRDD;
+    }
 
 }
