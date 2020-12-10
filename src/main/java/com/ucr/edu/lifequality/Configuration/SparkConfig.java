@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.apache.spark.SparkConf;
 
+import java.io.File;
+
 @Configuration
 public class SparkConfig {
 
@@ -67,6 +69,14 @@ public class SparkConfig {
         parkPolygonRDD.buildIndex(IndexType.RTREE,false);
         parkPolygonRDD.indexedRawRDD.persist(StorageLevel.MEMORY_ONLY());
         return parkPolygonRDD;
+    }
+    @Bean(name="AirQuality")
+    public PointRDD getAirRDD() throws Exception {
+        PointRDD aqPointRDD = new PointRDD(sc, "../data/Parse_USAQ.csv", 0, FileDataSplitter.CSV, true);
+        aqPointRDD.buildIndex(IndexType.RTREE,false);
+        aqPointRDD.indexedRawRDD.persist(StorageLevel.MEMORY_ONLY());
+
+        return aqPointRDD;
     }
 
 }

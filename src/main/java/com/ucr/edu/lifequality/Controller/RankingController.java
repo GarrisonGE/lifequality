@@ -40,6 +40,11 @@ public class RankingController {
         Envelope range = new Envelope(ul.getLongitude(), ul.getLatitude(), lr.getLongitude(), lr.getLatitude());
         return count.getParkCount(range);
     }
+    @RequestMapping("/getAir")
+    public float getAir(@RequestParam Location ul, @RequestParam Location lr) throws Exception {
+        Envelope range = new Envelope(ul.getLongitude(), ul.getLatitude(), lr.getLongitude(), lr.getLatitude());
+        return count.getAir(range);
+    }
     @RequestMapping("/rank")
     public ArrayList<Rank> getRank(@RequestParam Location ul,
                                    @RequestParam Location lr,
@@ -72,7 +77,7 @@ public class RankingController {
                 int c_hos = count.getHosCount(range);
                 int c_poi = count.getPOICount(range);
                 int c_park = new Random().nextInt(30);
-                float c_airquality = new Random().nextInt(50);
+                float c_airquality = count.getAir(range);
 
                 rank.setC_hos(c_hos);
                 rank.setC_poi(c_poi);
